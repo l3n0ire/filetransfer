@@ -32,21 +32,23 @@ async function random()
   })
 
   const code = await response.json()
-
-  document.querySelector("#code").innerHTML = code.result.random.data[0]
+  const randomCode = code.result.random.data[0]
+  return randomCode
 }
 
 async function uploadImage(){
+    let randomCode = await random()
+    document.querySelector("#code").innerHTML = randomCode
     
     const ref = await firebase.storage().ref();
 
     const file = document.querySelector("#photo").files[0];
-    const name = new Date() + '-' + file.name;
+    const name = file.name;
     const metadata ={
         contentType:file.type
     }
 
-    const imageRef = await ref.child(name);
+    const imageRef = await ref.child(randomCode + "/" + name);
     const snapshot = await imageRef.put(file,metadata);
     console.log(snapshot)
     const url = await snapshot.ref.getDownloadURL();
