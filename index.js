@@ -8,7 +8,7 @@ dotenv.config({path: './config/config.env'});
 // body parser
 app.use(express.json());
 // set static folder
-//app.use(express.static(path.join(__dirname,'public')))
+app.use(express.static(path.join(__dirname,'public')))
 
 
 
