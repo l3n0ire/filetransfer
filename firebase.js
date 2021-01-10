@@ -37,10 +37,10 @@ async function random()
   return randomCode
 }
 
-async function addToDB(randomCode,password,expireTime){
+async function addToDB(downloadCode,password,expireTime){
 
-  const res = await firebase.database().ref("users/"+randomCode).set({
-    randomCode:randomCode,
+  const res = await firebase.database().ref("users/"+downloadCode).set({
+    downloadCode:downloadCode,
     password:password,
     expireTime:expireTime
   });
