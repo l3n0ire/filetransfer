@@ -7,8 +7,7 @@
 </head>
 <body>
     <div>
-        <input type="file" id="photo">
-        <a id ="link" href="/">link</a>
+        <input type="file" id="photo" multiple>
         <button onclick = "uploadImage()">Upload File</button>
         <p>Your Code: </p><h1 id="code"></h1>
     </div>
@@ -16,7 +15,10 @@
         <p>Download with code:</p>
         <input type="text" id="downloadCode" name="downloadCode"><br><br>
         <button onclick = "getDownloadLink()">Get Download Link</button>
-        <a id ="downloadLink" href="/">link</a>
+        <p>Files: </p>
+        <p id="fileNames"></p>
+        <button onclick ="downloadFiles()">Download Files</button>
+        <a id="downloadDummyElement"></a>
     </div>
 </body>
 <!-- The core Firebase JS SDK is always required and must be listed first -->

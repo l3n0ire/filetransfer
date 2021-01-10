@@ -37,11 +37,10 @@ async function random()
   return randomCode
 }
 
-async function addToDB(randomCode,link,password,expireTime){
+async function addToDB(randomCode,password,expireTime){
 
   const res = await firebase.database().ref("users/"+randomCode).set({
     randomCode:randomCode,
-    link:link,
     password:password,
     expireTime:expireTime
   });
@@ -53,32 +52,40 @@ async function uploadImage(){
     
     const ref = await firebase.storage().ref();
 
-    const file = document.querySelector("#photo").files[0];
-    const name = file.name;
-    const metadata ={
-        contentType:file.type
-    }
+    const files = document.querySelector("#photo").files;
 
-    if (file.size > 2097152) {
-      alert("File is too big!");
-      return;
-    }
+    for(let i=0;i<files.length;i++){
+      const name = files[i].name;
+      const metadata ={
+          contentType:files[i].type
+      }
 
-    const imageRef = await ref.child(randomCode + "/" + name);
-    const snapshot = await imageRef.put(file,metadata);
-    console.log(snapshot);
-    const url = await snapshot.ref.getDownloadURL();
-    
-    console.log(url);
-    alert("image Upload Successful");
-    const linkElement = document.querySelector('#link');
-    linkElement.href = url;
+      if (files[i].size > 2097152) {
+        alert("File is too big!");
+        return;
+      }
+
+      const imageRef = await ref.child(randomCode + "/" + name);
+      const snapshot = await imageRef.put(files[i],metadata);
+
+    }
+    alert("Upload Successful");
 
     // store in db
-    await addToDB(randomCode,url,"","");
+    await addToDB(randomCode,"","");
       
 }
+var urls=[]
+var fileNames=""
 
+async function downloadFiles(){
+  const downloadDummyElement = document.querySelector("#downloadDummyElement");
+  urls.forEach(url=>{
+    downloadDummyElement.href = url;
+    downloadDummyElement.click();
+    window.URL.revokeObjectURL(url);
+  })
+}
 async function getDownloadLink() {
     var code = document.getElementById("downloadCode").value;
     console.log(code);
@@ -86,14 +93,17 @@ async function getDownloadLink() {
     const ref = await firebase.storage().ref().child(code + "/");
 
     // do we have to check if the code exists?
-
+    const fileNamesElement = document.querySelector('#fileNames');
     ref.listAll().then(function(res) {
       res.items.forEach(function(item) {
           item.getDownloadURL().then(function(url) {
-            const linkElement = document.querySelector('#downloadLink');
-            linkElement.href = url;
+            urls.push(url)
+            fileNames = fileNames+' '+item.name;
+            fileNamesElement.innerHTML = fileNames;
           })
+          
       })
+      
     })
 
     const imageRef = await ref.child(code);
