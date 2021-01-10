@@ -59,6 +59,11 @@ async function uploadImage(){
         contentType:file.type
     }
 
+    if (file.size > 2097152) {
+      alert("File is too big!");
+      return;
+    }
+
     const imageRef = await ref.child(randomCode + "/" + name);
     const snapshot = await imageRef.put(file,metadata);
     console.log(snapshot);
