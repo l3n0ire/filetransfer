@@ -77,14 +77,21 @@ async function uploadImage(){
 }
 var urls=[]
 var fileNames=""
+const linksElement = document.querySelector("#links");
 
-async function downloadFiles(){
-  const downloadDummyElement = document.querySelector("#downloadDummyElement");
-  urls.forEach(url=>{
-    downloadDummyElement.href = url;
-    downloadDummyElement.click();
-    window.URL.revokeObjectURL(url);
-  })
+
+function downloadFiles(){
+  console.log(urls.length)
+  for(let j =0;j<urls.length;j++){
+    console.log("ran")
+    let a = document.createElement("A");
+    let br = document.createElement("br");
+    a.href = urls[j];
+    a.innerHTML=j
+    linksElement.appendChild(a);
+    linksElement.appendChild(br);
+    
+  }
 }
 async function getDownloadLink() {
     var code = document.getElementById("downloadCode").value;
@@ -97,7 +104,7 @@ async function getDownloadLink() {
     ref.listAll().then(function(res) {
       res.items.forEach(function(item) {
           item.getDownloadURL().then(function(url) {
-            urls.push(url)
+            urls.push(url);
             fileNames = fileNames+' '+item.name;
             fileNamesElement.innerHTML = fileNames;
           })
