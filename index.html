@@ -6,12 +6,18 @@
     <title>Firebase Storage test</title>
 </head>
 <body>
-    <input type="file" id="photo">
-    <a id ="link" href="/">link</a>
-    <button onclick = "uploadImage()">Upload File</button>
-    <button onclick = "random()">random</button>
-    <h1 id="code"></h1>
-    
+    <div>
+        <input type="file" id="photo">
+        <a id ="link" href="/">link</a>
+        <button onclick = "uploadImage()">Upload File</button>
+        <p>Your Code: </p><h1 id="code"></h1>
+    </div>
+    <div>
+        <p>Download with code:</p>
+        <input type="text" id="downloadCode" name="downloadCode"><br><br>
+        <button onclick = "getDownloadLink()">Get Download Link</button>
+        <a id ="downloadLink" href="/">link</a>
+    </div>
 </body>
 <!-- The core Firebase JS SDK is always required and must be listed first -->
 <script src="https://www.gstatic.com/firebasejs/8.2.2/firebase-app.js"></script>

@@ -73,3 +73,23 @@ async function uploadImage(){
     await addToDB(randomCode,url,"","");
       
 }
+
+async function getDownloadLink() {
+    var code = document.getElementById("downloadCode").value;
+    console.log(code);
+    
+    const ref = await firebase.storage().ref().child(code + "/");
+
+    // do we have to check if the code exists?
+
+    ref.listAll().then(function(res) {
+      res.items.forEach(function(item) {
+          item.getDownloadURL().then(function(url) {
+            const linkElement = document.querySelector('#downloadLink');
+            linkElement.href = url;
+          })
+      })
+    })
+
+    const imageRef = await ref.child(code);
+}
