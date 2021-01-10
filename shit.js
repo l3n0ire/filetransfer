@@ -19,14 +19,23 @@ var firebaseConfig = {
     databaseURL: process.env.databaseURL,
     storageBucket: process.env.storageBucket,
     messagingSenderId: process.env.messagingSenderId,
-    appId: process.env.appId
+    appId: process.env.appId,
+    type:process.env.type,
+    private_key_id: process.env.private_key_id,
+    private_key:process.env.private_key,
+    client_email:process.env.client_email,
+    client_id:process.env.client_id,
+    auth_uri : process.env.auth_uri,
+    token_uri : process.env.token_uri,
+    auth_provider_x509_cert_url : process.env.auth_provider_x509_cert_url,
+    client_x509_cert_url: process.env.client_x509_cert_url
   };
 firebase.initializeApp(firebaseConfig);
 
 var serviceAccount = require("./fir-storagetest-98e1a-firebase-adminsdk-2sjrd-e890b78adf.json");
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: admin.credential.cert(firebaseConfig),
   databaseURL: "https://fir-storagetest-98e1a-default-rtdb.firebaseio.com"
 });
 
@@ -62,7 +71,7 @@ app.post('/api/files', function (req, res) {
 
 async function addToDB(downloadCode,password,expireTime){
 
-    const res = await firebaseApp.database().ref("users/"+downloadCode).set({
+    const res = await firebase.database().ref("users/"+downloadCode).set({
       downloadCode:downloadCode,
       password:password,
       expireTime:expireTime
@@ -72,10 +81,15 @@ async function addToDB(downloadCode,password,expireTime){
 async function getDownloadLink(code) {
   //var code = document.getElementById("downloadCode").value;
   //console.log(code);
+  let folderName = code+'/'
   
-  const ref = await bucket.getFiles(function(err, files) {
+  const ref = await bucket.getFiles({prefix:folderName, delimiter:'/', autoPaginate:false},function(err, files) {
       if (!err) {
-        console.log('https://firebasestorage.googleapis.com/v0/b/' +  files[0].storage.projectId + files[0].metadata.mediaLink + )
+        console.log(files.length)
+        // check if folder exists
+        if(files.length!=0)
+          console.log(files[0].metadata.mediaLink)
+        //console.log('https://firebasestorage.googleapis.com/v0/b/' +  files[0].storage.projectId + files[0].metadata.mediaLink +"" )
       }
       else
       {
