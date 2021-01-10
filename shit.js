@@ -32,7 +32,7 @@ var firebaseConfig = {
   };
 firebase.initializeApp(firebaseConfig);
 
-var serviceAccount = require("./fir-storagetest-98e1a-firebase-adminsdk-2sjrd-e890b78adf.json");
+//var serviceAccount = require("./fir-storagetest-98e1a-firebase-adminsdk-2sjrd-e890b78adf.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(firebaseConfig),
@@ -42,11 +42,28 @@ admin.initializeApp({
 var bucket = admin.storage().bucket(process.env.storageBucket);
 
 // download file
-app.get('/api/files/:downloadCode', function (req, res) {
-    // check if exists
-    //res.send(req.params.downloadCode)
-    getDownloadLink(req.params.downloadCode);
-    res.send(urls);
+app.get('/api/files/:downloadCode', async function (req, res) {
+  let folderName = req.params.downloadCode+'/'
+  
+  bucket.getFiles({prefix:folderName, delimiter:'/', autoPaginate:false},function(err, files) {
+      if (!err) {
+        console.log(files.length)
+        // check if folder exists
+        if(files.length!=0)
+        {
+          files.forEach(file=>{
+            urls.push(file.metadata.mediaLink)
+          });
+          res.send(urls);
+          // clear urls
+          urls =[];
+        }
+      }
+      else
+      {
+        console.log(err);
+      }
+  });
 })
 
 // get keys
@@ -78,47 +95,10 @@ async function addToDB(downloadCode,password,expireTime){
     });  
 }
 
-async function getDownloadLink(code) {
-  //var code = document.getElementById("downloadCode").value;
-  //console.log(code);
-  let folderName = code+'/'
-  
-  const ref = await bucket.getFiles({prefix:folderName, delimiter:'/', autoPaginate:false},function(err, files) {
-      if (!err) {
-        console.log(files.length)
-        // check if folder exists
-        if(files.length!=0)
-          console.log(files[0].metadata.mediaLink)
-        //console.log('https://firebasestorage.googleapis.com/v0/b/' +  files[0].storage.projectId + files[0].metadata.mediaLink +"" )
-      }
-      else
-      {
-        console.log(err);
-      }
-  });
   
 
-  // do we have to check if the code exists?
-  // const fileNamesElement = document.querySelector('#fileNames');
-  /*
-  ref.listAll().then(function(res) {
-    res.items.forEach(function(item) {
-        item.getDownloadURL().then(function(url) {
-          urls.push(url);
-          fileNames = fileNames+' '+item.name;
-          fileNamesElement.innerHTML = fileNames;
-        })
-        
-    })
-    
-  })
 
-  const imageRef = await ref.child(code);
-  console.log(urls);
-  */
 
-  //return urls;
-}
 
 
 const PORT= process.env.PORT || 5000;
