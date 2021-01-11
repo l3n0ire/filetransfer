@@ -3,6 +3,8 @@ const express = require('express');
 require('dotenv').config();
 const app = express();
 const firebase = require('firebase');
+var admin = require("firebase-admin");
+var urls=[]
 
 
 // body parser
@@ -17,14 +19,53 @@ var firebaseConfig = {
     databaseURL: process.env.databaseURL,
     storageBucket: process.env.storageBucket,
     messagingSenderId: process.env.messagingSenderId,
-    appId: process.env.appId
+    appId: process.env.appId,
+    type:process.env.type,
+    private_key_id: process.env.private_key_id,
+    private_key:process.env.private_key,
+    client_email:process.env.client_email,
+    client_id:process.env.client_id,
+    auth_uri : process.env.auth_uri,
+    token_uri : process.env.token_uri,
+    auth_provider_x509_cert_url : process.env.auth_provider_x509_cert_url,
+    client_x509_cert_url: process.env.client_x509_cert_url
   };
-var firebaseApp = firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
+
+admin.initializeApp({
+  credential: admin.credential.cert(firebaseConfig),
+  databaseURL: process.env.databaseURL
+});
+
+var bucket = admin.storage().bucket(process.env.storageBucket);
 
 // download file
-app.get('/api/files/:downloadCode', function (req, res) {
-    // check if exists
-    res.send(req.params.downloadCode)
+app.get('/api/files/:downloadCode', async function (req, res) {
+  let folderName = req.params.downloadCode+'/'
+  
+  bucket.getFiles({prefix:folderName, delimiter:'/', autoPaginate:false},function(err, files) {
+      if (!err) {
+        // check if folder exists
+        if(files.length!=0)
+        {
+          files.forEach(file=>{
+            urls.push(file.metadata.mediaLink)
+          });
+          res.send({"urls":urls});
+          // clear urls
+          urls =[];
+        }
+        else{
+            res.status(400).json({"message":"folder not found"})
+        }
+        
+      }
+      else
+      {
+        console.log("error");
+        res.status(400).json({"message":err})
+      }
+  });
 })
 
 // get keys
@@ -49,14 +90,12 @@ app.post('/api/files', function (req, res) {
 
 async function addToDB(downloadCode,password,expireTime){
 
-    const res = await firebaseApp.database().ref("users/"+downloadCode).set({
+    const res = await firebase.database().ref("users/"+downloadCode).set({
       downloadCode:downloadCode,
       password:password,
       expireTime:expireTime
     });  
 }
 
-
 const PORT= process.env.PORT || 5000;
 app.listen(PORT,()=>console.log(`server running ${process.env.NODE_ENV} on port ${PORT}`));
-console.log(process.env.apiKey)
