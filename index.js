@@ -98,4 +98,5 @@ async function addToDB(downloadCode,password,expireTime){
 }
 
 const PORT= process.env.PORT || 5000;
+console.log(process.env.apiKey)
 app.listen(PORT,()=>console.log(`server running ${process.env.NODE_ENV} on port ${PORT}`));
