@@ -1,5 +1,5 @@
 // Your web app's Firebase configuration
-fetch('http://localhost:5000/api/keys')
+fetch('https://file2go.herokuapp.com/api/keys')
   .then(res=>res.json())
   .then(firebaseConfig=>{
     // Initialize Firebase
@@ -63,7 +63,7 @@ async function uploadImage(){
       "expireTime":""
     }
     // store in db
-    let res = await fetch('http://localhost:5000/api/files', {
+    let res = await fetch('https://file2go.herokuapp.com/api/files', {
       method: "POST",
       body: JSON.stringify(data),
       headers: {"Content-type": "application/json; charset=UTF-8"}
@@ -78,7 +78,7 @@ async function getDownloadLink() {
   let downloadCode = document.getElementById("downloadCode").value;
 
   // get downloadLinks
-  let res = await fetch('http://localhost:5000/api/files/'+downloadCode);
+  let res = await fetch('https://file2go.herokuapp.com/api/files/'+downloadCode);
   let data = await res.json();
 
   // invalid code
