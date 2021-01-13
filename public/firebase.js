@@ -32,14 +32,21 @@ async function random()
   const randomCode = code.result.random.data[0]
   return randomCode
 }
+var files=[]
+
+function clickInput(){
+  document.getElementById("input").click()
+}
+
+document.getElementById("input").addEventListener("change", function(){
+  files= this.files;
+});
 
 async function uploadImage(){
     let downloadCode = await random();
     document.querySelector("#code").innerHTML = downloadCode;
     
     const ref = await firebase.storage().ref();
-
-    const files = document.querySelector("#photo").files;
 
     for(let i=0;i<files.length;i++){
       const name = files[i].name;

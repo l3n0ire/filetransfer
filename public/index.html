@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Firebase Storage test</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
     <div>
-        <input type="file" id="photo" multiple>
+        <button id="dummyButton" onclick="clickInput()">dummy</button>
+        <input type="file" id="input" multiple>
         <button onclick = "uploadImage()">Upload File</button>
         <p>Your Code: </p><h1 id="code"></h1>
     </div>
