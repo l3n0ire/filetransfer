@@ -81,33 +81,3 @@ async function uploadImage(){
   console.log(res);
       
 }
-
-async function getDownloadLink() {
-  const linksElement = document.querySelector("#links");
-  let downloadCode = document.getElementById("downloadCode").value;
-
-  // get downloadLinks
-  let res = await fetch(baseUrl+'/api/files/'+downloadCode);
-  let data = await res.json();
-
-  // invalid code
-  if(res.status == 400)
-  {
-    console.log(data)
-  }
-  else if(data.urls != undefined){
-    data.urls.forEach(url=>{
-      // create a tags for each link
-      let a = document.createElement("A");
-      let br = document.createElement("br");
-      a.classList.add("link")
-      a.href = url;
-      a.innerHTML=url
-      linksElement.appendChild(a);
-      linksElement.appendChild(br);
-    });
-  }
-  else{
-    console.log(data)
-  }
-}
