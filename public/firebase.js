@@ -1,84 +1,83 @@
 const baseUrl = "https://file2go.herokuapp.com"
 // Your web app's Firebase configuration
-fetch(baseUrl+'/api/keys')
-  .then(res=>res.json())
-  .then(firebaseConfig=>{
+fetch(baseUrl + '/api/keys')
+  .then(res => res.json())
+  .then(firebaseConfig => {
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     console.log(firebase);
   });
 
-async function random()
-{
+async function random() {
   let data = {
     "jsonrpc": "2.0",
     "method": "generateStrings",
     "params": {
-        "apiKey": "53b56391-d01d-40b7-984b-1a92afe63182",
-        "n": 1,
-        "length": 6,
-        "characters": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-        "replacement": true
+      "apiKey": "53b56391-d01d-40b7-984b-1a92afe63182",
+      "n": 1,
+      "length": 6,
+      "characters": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "replacement": true
     },
     "id": 42
   }
   const response = await fetch('https://api.random.org/json-rpc/2/invoke', {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {"Content-type": "application/json; charset=UTF-8"}
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: { "Content-type": "application/json; charset=UTF-8" }
   })
 
   const code = await response.json()
   const randomCode = code.result.random.data[0]
   return randomCode
 }
-var files=[]
+var files = []
 
-function clickInput(){
+function clickInput() {
   document.getElementById("input").click()
 }
 
-document.getElementById("input").addEventListener("change", function(){
-  files= this.files;
+document.getElementById("input").addEventListener("change", function () {
+  files = this.files;
 });
 
-async function uploadImage(){
-    let downloadCode = await random();
-    document.querySelector("#code").innerHTML = downloadCode;
-    
-    const ref = await firebase.storage().ref();
+async function uploadImage() {
+  let downloadCode = await random();
+  document.querySelector("#code").innerHTML = downloadCode;
 
-    for(let i=0;i<files.length;i++){
-      const name = files[i].name;
-      const metadata ={
-          contentType:files[i].type
-      }
+  const ref = await firebase.storage().ref();
 
-      if (files[i].size > 2097152) {
-        alert("File is too big!");
-        return;
-      }
-
-      const imageRef = await ref.child(downloadCode + "/" + name);
-      const snapshot = await imageRef.put(files[i],metadata);
-
+  for (let i = 0; i < files.length; i++) {
+    const name = files[i].name;
+    const metadata = {
+      contentType: files[i].type
     }
-    alert("Upload Successful");
 
-    let data = {
-      "downloadCode":downloadCode,
-      "password":"",
-      "expireTime":""
+    if (files[i].size > 2097152) {
+      alert("File is too big!");
+      return;
     }
-    // store in db
-    let res = await fetch(baseUrl+'/api/files', {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {"Content-type": "application/json; charset=UTF-8"}
-    })
+
+    const imageRef = await ref.child(downloadCode + "/" + name);
+    const snapshot = await imageRef.put(files[i], metadata);
+
+  }
+  alert("Upload Successful");
+
+  let data = {
+    "downloadCode": downloadCode,
+    "password": "",
+    "expireTime": ""
+  }
+  // store in db
+  let res = await fetch(baseUrl + '/api/files', {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: { "Content-type": "application/json; charset=UTF-8" }
+  })
   res = await res.json();
   console.log(res);
-      
+
 }
 
 async function getDownloadLink() {
@@ -86,26 +85,25 @@ async function getDownloadLink() {
   let downloadCode = document.getElementById("downloadCode").value;
 
   // get downloadLinks
-  let res = await fetch(baseUrl+'/api/files/'+downloadCode);
+  let res = await fetch(baseUrl + '/api/files/' + downloadCode);
   let data = await res.json();
 
   // invalid code
-  if(res.status == 400)
-  {
+  if (res.status == 400) {
     console.log(data)
   }
-  else if(data.urls != undefined){
-    data.urls.forEach(url=>{
+  else if (data.urls != undefined) {
+    data.urls.forEach(url => {
       // create a tags for each link
       let a = document.createElement("A");
       let br = document.createElement("br");
       a.href = url;
-      a.innerHTML=url
+      a.innerHTML = url
       linksElement.appendChild(a);
       linksElement.appendChild(br);
     });
   }
-  else{
+  else {
     console.log(data)
   }
 }

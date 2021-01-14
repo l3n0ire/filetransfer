@@ -25,12 +25,11 @@
         </nav>
     </header>
     <section>
-        <h2 id="sectionTitle">Ready to Upload?</h2>
-        <button id="dummyButton" onclick="clickInput()">Browse Files</button>
-        <input type="file" id="input" multiple>
-        <button onclick="uploadImage()">Upload!</button>
-        <h2 id="codeLabel">Your Code: </h2>
-        <p id="code">######</p>
+        <h2 id="sectionTitle">Download with Code:</h2>
+        <input type="text" id="downloadCode" name="downloadCode" maxlength="6"><br>
+        <button onclick="getDownloadLink()">Get Download Link</button>
+        <h2 id="fileLabel">Files: </h2>
+        <a id="link" href="https://google.com">https://google.com</a>
     </section>
 </body>
 <!-- The core Firebase JS SDK is always required and must be listed first -->
