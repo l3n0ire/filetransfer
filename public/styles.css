@@ -124,6 +124,11 @@ section {
     padding: 0 0.5em;
 }
 
+#linksElement{
+    width:80%;
+    word-wrap: break-word;
+}
+
 @media (min-width: 480px) {
     html {
         font-size: 18px;

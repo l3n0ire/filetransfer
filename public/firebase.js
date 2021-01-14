@@ -1,5 +1,5 @@
-const baseUrl = "https://file2go.herokuapp.com"
-//const baseUrl = "http://localhost:5000"
+//const baseUrl = "https://file2go.herokuapp.com"
+const baseUrl = "http://localhost:5000"
 // Your web app's Firebase configuration
 fetch(baseUrl+'/api/keys')
   .then(res=>res.json())
