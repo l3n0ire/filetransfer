@@ -111,12 +111,12 @@ section {
     color: #14A76C;
 }
 
-#link {
+.link {
     font-family: 'Montserrat', sans-serif;
     transition: all 0.2s;
 }
 
-#link:hover {
+.link:hover {
     color: #14A76C;
 }
 

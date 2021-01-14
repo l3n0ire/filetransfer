@@ -1,4 +1,5 @@
-const baseUrl = "https://file2go.herokuapp.com"
+//const baseUrl = "https://file2go.herokuapp.com"
+const baseUrl = "http://localhost:5000"
 // Your web app's Firebase configuration
 fetch(baseUrl+'/api/keys')
   .then(res=>res.json())
@@ -99,6 +100,7 @@ async function getDownloadLink() {
       // create a tags for each link
       let a = document.createElement("A");
       let br = document.createElement("br");
+      a.classList.add("link")
       a.href = url;
       a.innerHTML=url
       linksElement.appendChild(a);
